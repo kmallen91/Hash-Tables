@@ -53,10 +53,10 @@ class HashTable:
         Fill this in.
         '''
         # hash key to make index
-        index = self._hash(key)
+        index = self._hash_mod(key)
         # if hashed key already exists == collision
         if self.storage[index] is not None:
-            print('Error: item at index')
+            print(f'Error: item at index {index}')
         else:
             # else add key value to hashed key location
             self.storage[index] = (key, value)
@@ -71,7 +71,7 @@ class HashTable:
         Fill this in.
         '''
         # hash key
-        index = self._hash(key)
+        index = self._hash_mod(key)
         old_item = None
         # if hash exists
         if self.storage[index] is not None:
@@ -83,7 +83,7 @@ class HashTable:
                 self.storage[index] = None
             # if not correct key, collision
             else:
-                print('Error: collision occurred')
+                print(f'Error: collision occurred at {index}')
         # else key doesn't exist
         else:
             print("Error: key not found ")
@@ -99,7 +99,7 @@ class HashTable:
         Fill this in.
         '''
         # hash key
-        index = self._hash(key)
+        index = self._hash_mod(key)
         # if hash exists
         if self.storage[index] is not None:
             # if key is correct hash
@@ -107,7 +107,7 @@ class HashTable:
                 # return value at key
                 return self.storage[index][1]
             else:
-                print('Error: collision')
+                print(f'Error: collision at index {index}')
         # if hash doesn't exist, return none
         else:
             return None
