@@ -56,10 +56,15 @@ class HashTable:
         index = self._hash_mod(key)
         # if hashed key already exists == collision
         if self.storage[index] is not None:
-            print(f'Error: item at index {index}')
+            # create new node
+            new_node = LinkedPair(key, value)
+            # set current head to next node
+            new_node.next = self.storage[index]
+            # set index to new node
+            self.storage[index] = new_node
         else:
             # else add key value to hashed key location
-            self.storage[index] = (key, value)
+            self.storage[index] = LinkedPair(key, value)
             return
 
     def remove(self, key):
@@ -72,23 +77,24 @@ class HashTable:
         '''
         # hash key
         index = self._hash_mod(key)
-        old_item = None
-        # if hash exists
-        if self.storage[index] is not None:
-            # and if is correct key
-            if self.storage[index][0] == key:
-                # set old item to be deleted value
-                old_item = self.storage[index]
-                # set to None
-                self.storage[index] = None
-            # if not correct key, collision
-            else:
-                print(f'Error: collision occurred at {index}')
-        # else key doesn't exist
-        else:
+        current_node = self.storage[index]
+        # if key at head of LL, set current value to next item in LL
+        if current_node.key == key:
+            self.storage[index] = current_node.next
+
+        # if not key at head of LL, traverse list
+        if current_node.key != key:
+            # while next node still exists
+            while current_node.next is not None:
+                # set prev node before moving
+                prev_node = current_node
+                # move forward
+                current_node = current_node.next
+                if current_node.key == key:
+                    # if match, set prev node.next to skip current node
+                    prev_node.next = current_node.next
+                    return None
             print("Error: key not found ")
-        # return deleted value
-        return old_item
 
     def retrieve(self, key):
         '''
@@ -100,19 +106,22 @@ class HashTable:
         '''
         # hash key
         index = self._hash_mod(key)
-        # if hash exists
-        if self.storage[index] is not None:
-            # if key is correct hash
-            if self.storage[index][0] == key:
-                # return value at key
-                return self.storage[index][1]
-            else:
-                print(f'Error: collision at index {index}')
-        # if hash doesn't exist, return none
-        else:
-            return None
+        current_node = self.storage[index]
 
-        return
+        if current_node is None:
+            return None
+        elif current_node.key == key:
+            return current_node.value
+
+        if current_node.key != key:
+            # loop while next value
+            while current_node.next != None:
+                # move value to next
+                current_node = current_node.next
+                # if found, return value
+                if current_node == key:
+                    return current_node.value
+            return None
 
     def resize(self):
         '''
