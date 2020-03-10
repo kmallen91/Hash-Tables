@@ -54,6 +54,7 @@ class HashTable:
         '''
         # hash key to make index
         index = self._hash_mod(key)
+
         # if hashed key already exists == collision
         if self.storage[index] is not None:
             # create new node
@@ -65,7 +66,6 @@ class HashTable:
         else:
             # else add key value to hashed key location
             self.storage[index] = LinkedPair(key, value)
-            return
 
     def remove(self, key):
         '''
@@ -106,21 +106,23 @@ class HashTable:
         '''
         # hash key
         index = self._hash_mod(key)
-        current_node = self.storage[index]
 
-        if current_node is None:
-            return None
-        elif current_node.key == key:
-            return current_node.value
+        # find occupied node
+        if self.storage[index] is not None:
+            # if keys match, return value
+            if self.storage[index].key == key:
+                return self.storage[index].value
+            # else iterate through LL
+            else:
+                current = self.storage[index]
+                while current.next is not None:
+                    # move through nodes, find match, return value or None
+                    current = current.next
+                    if current.key == key:
+                        return current.value
 
-        if current_node.key != key:
-            # loop while next value
-            while current_node.next != None:
-                # move value to next
-                current_node = current_node.next
-                # if found, return value
-                if current_node == key:
-                    return current_node.value
+                return None
+        else:
             return None
 
     def resize(self):
@@ -135,11 +137,14 @@ class HashTable:
         # update storage
         self.capacity *= 2
         self.storage = [None] * self.capacity
+        current_item = None
 
         # iterate through old storage, inserting key, values into new storage
         for item in old_storage:
-            if item is not None:
-                self.insert(item[0], item[1])
+            current_item = item
+            while current_item is not None:
+                self.insert(current_item.key, current_item.value)
+                current_item = current_item.next
 
 
 if __name__ == "__main__":
